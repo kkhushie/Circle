@@ -32,7 +32,7 @@ Built as a **monorepo** with React frontend and Node.js backend, this project de
 | **🏘️ Circles** | Communities with public/private options, roles, invite codes |
 | **📸 Moments** | customized hour stories with auto-expiry, view counts, replies |
 | **💬 Huddles** | Real-time chat with Socket.io, reactions, read receipts |
-| **🎥 RoundTables** | Video meetings using WebRTC, screen sharing, recordings |
+| **🎥 RoundTables** | Video meetings using Zoom API, screen sharing, recordings |
 | **🔔 Notifications** | In-app and push notifications for engagement |
 
 ---
