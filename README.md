@@ -181,8 +181,8 @@ REACT_APP_SOCKET_URL=http://localhost:5000
 Use these credentials to test:
 ```json
 {
-  "email": "test@example.com",
-  "password": "password123"
+  "email": "test@user.com",
+  "password": "test1234"
 }
 ```
 
