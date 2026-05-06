@@ -2,7 +2,7 @@
 # 🌐 Circle – Full-Stack Social App (MERN)
 
 <div align="center">
-  <img width="1908" height="976" alt="image" src="https://github.com/user-attachments/assets/6f3f7ef2-5096-4e9f-aeb2-d9e2cd13ece9" />
+  <img width="1884" height="921" alt="image" src="https://github.com/user-attachments/assets/b1faf198-5dc4-483d-a96e-b02664f2e446" />
 
   **A modern social networking platform built with the MERN stack**
   
