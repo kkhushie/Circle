@@ -7,14 +7,17 @@ const {
     updateProfile,
     forgotPassword,
     resetPassword,
-    googleLogin
+    googleLogin,
+    refresh,
+    logout
 } = require('../controllers/authController');
 const { auth } = require('../middleware/auth');
 
 router.post('/register', register);
 router.post('/login', login);
 router.post('/google', googleLogin);
-// router.post('/logout', logout); 
+router.get('/refresh', refresh);
+router.post('/logout', logout);
 
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);

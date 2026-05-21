@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const generateToken = require('../utils/generateToken');
+const { generateToken, generateRefreshToken } = require('../utils/generateToken');
+const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
 
@@ -38,13 +39,20 @@ const register = async (req, res) => {
 
     // Generate token
     const token = generateToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    res.cookie('jwt', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
 
     // Send response
     res.status(201).json({
       success: true,
       token,
       user
-
     });
   } catch (error) {
     res.status(500).json({
@@ -99,6 +107,15 @@ const login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    res.cookie('jwt', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     user.onlineStatus.lastSeen = new Date();
     await user.save();
     // Send response
@@ -310,6 +327,14 @@ const googleLogin = async (req, res) => {
     }
 
     const jwtToken = generateToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    res.cookie('jwt', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
     res.json({
       success: true,
@@ -326,6 +351,40 @@ const googleLogin = async (req, res) => {
   }
 };
 
+const refresh = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.jwt;
+
+    if (!refreshToken) {
+      return res.status(401).json({ success: false, message: 'Unauthorized. No refresh token provided.' });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET || process.env.JWT_SECRET);
+    
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user || !user.isActive) {
+      return res.status(401).json({ success: false, message: 'Unauthorized. User not found or inactive.' });
+    }
+
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      token
+    });
+  } catch (error) {
+    return res.status(403).json({ success: false, message: 'Forbidden. Refresh token invalid or expired.' });
+  }
+};
+
+const logout = async (req, res) => {
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0)
+  });
+  res.status(200).json({ success: true, message: 'Logged out successfully' });
+};
+
 module.exports = {
   register,
   login,
@@ -333,5 +392,7 @@ module.exports = {
   updateProfile,
   forgotPassword,
   resetPassword,
-  googleLogin
+  googleLogin,
+  refresh,
+  logout
 };

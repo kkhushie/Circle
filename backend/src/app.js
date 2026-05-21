@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
+const cookieParser = require('cookie-parser');
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
@@ -43,6 +44,7 @@ app.use(compression());
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(cookieParser());
 
 
 app.get('/', (req, res) => {
